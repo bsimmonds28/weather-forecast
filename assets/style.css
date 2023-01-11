@@ -81,12 +81,12 @@
   }
 
   h5 {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     margin: 15px;
   }
 
   h6 {
-    font-size: 1.3rem;
+    font-size: 1rem;
     margin: 15px;
   }
   
@@ -104,7 +104,24 @@
   }
 
   #future-weather {
-    display: inline;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  #current-weather {
+    margin: 20px 20px 20px 0px;
+    padding: 15px;
+    border: 3px solid var(--dark);
+    border-radius: var(--border-radius);
+  }
+
+  .futureday {
+    margin: 20px 20px 20px 0px;
+    padding: 15px;
+    border: 3px solid var(--dark);
+    border-radius: var(--border-radius);
+    background-color: var(--dark);
+    color: var(--primary);
+    width: fit-content;
   }
   
   .flex-row {
@@ -128,11 +145,11 @@
   
   @media screen and (min-width: 768px) {
     .col-md-4 {
-      flex: 0 0 calc(100% * 4 / 12 - 2%);
+      flex: 0 0 calc(100% * 3 / 12 - 2%);
     }
   
     .col-md-8 {
-      flex: 0 0 calc(100% * 8 / 12 - 2%);
+      flex: 0 0 calc(100% * 9 / 12 - 2%);
     }
   
   }

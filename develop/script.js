@@ -7,6 +7,7 @@ var results = document.querySelector('#repos-container');
 var futureResults = document.querySelector('#future-weather');
 var currentResults = document.querySelector('#current-weather');
 var pastSearchContainer = document.querySelector('#past-search-container');
+var futureTitleContainer = document.querySelector('#futuer-weather-title');
 var citiesSearchedArray = [];
 var searchTerm;
 var timeSelection;
@@ -67,7 +68,7 @@ function init(){
     
 init();
 
-//Get city repos
+//Get city weather repos
 var getCoordinates = function (searchTerm) {
     var geocoding= 'http://api.openweathermap.org/geo/1.0/direct?q=' + searchTerm + '&limit=1&appid=0a50200db97416c63d779065700c03c2';
 
@@ -121,24 +122,21 @@ var displayRepos = function (details) {
     var title = document.createElement('h4');
     title.textContent = searchTerm;
     results.appendChild(title);
-    
-    if (timeSelection == "current") {
-        getCurrentWeather(details);
 
-    } else if (timeSelection == "future") {
-        getFutureWeather(details);
-
+    if (timeSelection == "future") {
+      getFutureWeather(details);
+    } else if (timeSelection == "current") {
+      getCurrentWeather(details);
     } else {
-        getCurrentWeather(details);
-        getFutureWeather(details);
-    };
-
+      getCurrentWeather(details);
+      getFutureWeather(details);
+    }
 };
 
 //Function to print current weather
 var getCurrentWeather = function (details) {
     var date = document.createElement('h5');
-    var currentDate = dayjs().format('MM/DD/YYYY');
+    var currentDate = dayjs().format('MM-DD-YYYY');
     date.textContent = currentDate;
     currentResults.appendChild(date);
 
@@ -164,47 +162,51 @@ var getCurrentWeather = function (details) {
     //windspeed
     var windspeed = document.createElement('h6');
     var windspeedVal = details.list[0].wind.speed;
-    windspeed.textContent = "Wind: " + windspeedVal + " MPH";
+    windspeed.textContent = "Wind: " + windspeedVal + "MPH";
     currentResults.appendChild(windspeed);
 };
 
 //Function to print future weather
 var getFutureWeather = function (details) {
-  for (i = 8; i < 40; i++) {
+  var futureTitle = document.createElement('h4');
+  futureTitle.textContent = "5-Day Forecast";
+  futureTitleContainer.appendChild(futureTitle);
 
-    for (var i = 0; i < 1; i++){
+  for (i = 7; i < 40; i++) {
+    var divFuture = document.createElement('div');
+    divFuture.setAttribute('class', "futureday");
+    futureResults.appendChild(divFuture);
+
     var date = document.createElement('h5');
-    var k = i - (i-1);
-    var todaysDate = dayjs().add(k, 'day');
-    var dateVal = todaysDate.format('MM/DD/YYYY');
+    var todaysDate = details.list[i].dt_txt;
+    var dateVal = todaysDate.slice(5, 10);
     date.textContent = dateVal;
-    futureResults.appendChild(date);
-    };
+    divFuture.appendChild(date);
 
     //icon
     var icon = document.createElement('img');
     var iconValCode = details.list[i].weather[0].icon;
     var iconVal = "http://openweathermap.org/img/wn/" + iconValCode + "@2x.png";
     icon.setAttribute("src", iconVal);
-    futureResults.appendChild(icon);
+    divFuture.appendChild(icon);
 
     //temperature
     var temp = document.createElement('h6');
     var tempVal = details.list[i].main.temp;
     temp.textContent = "Temp: " + tempVal + "°F";
-    futureResults.appendChild(temp);
+    divFuture.appendChild(temp);
 
     //humidity
     var humidity = document.createElement('h6');
     var humidityVal = details.list[i].main.humidity;
     humidity.textContent = "Humidity: " + humidityVal + "%";
-    futureResults.appendChild(humidity);
+    divFuture.appendChild(humidity);
 
     //windspeed
     var windspeed = document.createElement('h6');
     var windspeedVal = details.list[i].wind.speed;
-    windspeed.textContent = "Wind: " + windspeedVal + " MPH";
-    futureResults.appendChild(windspeed);
+    windspeed.textContent = "Wind: " + windspeedVal + "MPH";
+    divFuture.appendChild(windspeed);
 
     i = i + 7;
   }
@@ -243,6 +245,11 @@ var pastSearchClickHandler = function (event) {
 pastSearchContainer.addEventListener('click', pastSearchClickHandler);
 
 /*
+#1
 Not currently clearing printed data before showing new time selection
 Need function to clear printed data
+    futureResults.removeChild(futureResults.firstElementChild);
+
+#2
+Not accurately pulling date
 */

@@ -28,11 +28,8 @@ var searchTermCoordinates = function (searchTerm) {
       city: searchTerm,
     };
 
-    for (var i = 0; i < citiesSearchedArray.length; i++) {
-      if (citiesSearchedArray[i].city !== citiesSearchedTemp) {
-        citiesSearchedArray.push(citiesSearchedTemp);
-      }
-    }
+    citiesSearchedArray.push(citiesSearchedTemp);
+
     storeInput();
 
     getCoordinates(searchTerm);
@@ -275,10 +272,14 @@ function printPastSearches() {
   pastSearchHeader.textContent = "VIEW PAST SEARCHES";
   pastSearchContainer.appendChild(pastSearchHeader);
 
-  for (var i = 0; i < citiesSearchedArray.length; i++) {
-      var lastCitySearched = citiesSearchedArray[i].city;
+  var unduplicatedCitiesSearchedArray = citiesSearchedArray.filter((element, index) => {
+    return citiesSearchedArray.indexOf(element) === index;
+  });
 
-      if (lastCitySearched) {
+  for (var i = 0; i < unduplicatedCitiesSearchedArray.length; i++) {
+      var lastCitySearched = unduplicatedCitiesSearchedArray[i].city;
+
+      if (lastCitySearched && lastCitySearched !== ) {
         citySearchedListItem = document.createElement("p");
         citySearchedListItem.textContent = lastCitySearched;
         pastSearchContainer.appendChild(citySearchedListItem);

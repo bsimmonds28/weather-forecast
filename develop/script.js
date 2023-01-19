@@ -27,7 +27,12 @@ var searchTermCoordinates = function (searchTerm) {
     {
       city: searchTerm,
     };
-    citiesSearchedArray.push(citiesSearchedTemp);
+
+    for (var i = 0; i < citiesSearchedArray.length; i++) {
+      if (citiesSearchedArray[i].city !== citiesSearchedTemp) {
+        citiesSearchedArray.push(citiesSearchedTemp);
+      }
+    }
     storeInput();
 
     getCoordinates(searchTerm);
@@ -69,7 +74,7 @@ function init(){
 init();
 
 //Get city weather repos
-var getCoordinates = function (searchTerm) {
+  var getCoordinates = function (searchTerm) {
     var geocoding= 'http://api.openweathermap.org/geo/1.0/direct?q=' + searchTerm + '&limit=1&appid=0a50200db97416c63d779065700c03c2';
 
     fetch(geocoding)
@@ -77,7 +82,8 @@ var getCoordinates = function (searchTerm) {
         if (response.ok) {
             response.json().then(function (data) {
             console.log(data);
-            getWeather(data);
+            getCurrentWeatherFetch(data);
+            getWeatherFetch(data);
             });
         } else {
           alert('Error: ' + response.statusText);
@@ -88,7 +94,29 @@ var getCoordinates = function (searchTerm) {
       });
   };
 
-  var getWeather = function (data) {
+  var getCurrentWeatherFetch = function (data) {
+    var lat = data[0].lat;
+    var lon = data[0].lon;
+    var apiUrl = 'https://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + lon + '&appid=0a50200db97416c63d779065700c03c2&units=imperial&lang=en';
+    console.log(apiUrl);
+
+    fetch(apiUrl)
+      .then(function (response) {
+        if (response.ok) {
+            response.json().then(function (details) {
+            console.log(details);
+            displayRepos(details);
+          });
+        } else {
+          alert('Error: ' + response.statusText);
+        }
+      })
+      .catch(function (error) {
+        alert('Unable to connect to Open Weather to get current weather data');
+      });
+  };
+
+  var getWeatherFetch = function (data) {
     var lat = data[0].lat;
     var lon = data[0].lon;
     var apiUrl = 'http://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + lon + '&appid=0a50200db97416c63d779065700c03c2&units=imperial&lang=en';
@@ -106,13 +134,11 @@ var getCoordinates = function (searchTerm) {
         }
       })
       .catch(function (error) {
-        alert('Unable to connect to Open Weather');
+        alert('Unable to connect to Open Weather to get future weather');
       });
 };
 
-//Display city name
-//Current: Add date, display an icon representation of weather conditions, the temperature, the humidity, and the wind speed
-//Future: Add 5-day forecast that displays the date, an icon representation of weather conditions, the temperature, the wind speed, and the humidity
+//Display function which shows city name and based on time selection displays information
 var displayRepos = function (details) {
     if (details.length === 0) {
       repoContainerEl.textContent = 'No weather found.';
@@ -121,7 +147,12 @@ var displayRepos = function (details) {
 
     var title = document.createElement('h4');
     title.textContent = searchTerm;
+    if (results.hasChildNodes()) {
+      results.removeChild(results.children[0]);
+    }
     results.appendChild(title);
+
+    removeWeather();
 
     if (timeSelection == "future") {
       getFutureWeather(details);
@@ -134,7 +165,9 @@ var displayRepos = function (details) {
 };
 
 //Function to print current weather
+//Current: Add date, display an icon representation of weather conditions, the temperature, the humidity, and the wind speed
 var getCurrentWeather = function (details) {
+
     var date = document.createElement('h5');
     var currentDate = dayjs().format('MM-DD-YYYY');
     date.textContent = currentDate;
@@ -142,32 +175,34 @@ var getCurrentWeather = function (details) {
 
     //icon
     var icon = document.createElement('img');
-    var iconValCode = details.list[0].weather[0].icon;
+    var iconValCode = details.weather[0].icon;
     var iconVal = "http://openweathermap.org/img/wn/" + iconValCode + "@2x.png";
     icon.setAttribute("src", iconVal);
     currentResults.appendChild(icon);
 
     //temperature
     var temp = document.createElement('h6');
-    var tempVal = details.list[0].main.temp;
+    var tempVal = details.main.temp;
     temp.textContent = "Temp: " + tempVal + "°F";
     currentResults.appendChild(temp);
 
     //humidity
     var humidity = document.createElement('h6');
-    var humidityVal = details.list[0].main.humidity;
+    var humidityVal = details.main.humidity;
     humidity.textContent = "Humidity: " + humidityVal + "%";
     currentResults.appendChild(humidity);
 
     //windspeed
     var windspeed = document.createElement('h6');
-    var windspeedVal = details.list[0].wind.speed;
+    var windspeedVal = details.wind.speed;
     windspeed.textContent = "Wind: " + windspeedVal + "MPH";
     currentResults.appendChild(windspeed);
 };
 
 //Function to print future weather
+//Future: Add 5-day forecast that displays the date, an icon representation of weather conditions, the temperature, the wind speed, and the humidity
 var getFutureWeather = function (details) {
+  
   var futureTitle = document.createElement('h4');
   futureTitle.textContent = "5-Day Forecast";
   futureTitleContainer.appendChild(futureTitle);
@@ -212,6 +247,26 @@ var getFutureWeather = function (details) {
   }
 };
 
+//Remove future printed weather results
+var removeWeather = function () {
+
+  if (currentResults.hasChildNodes()) {
+    for (var i = 0; i < 5; i++) {
+      currentResults.removeChild(currentResults.children[0]);
+    }
+  }
+
+  if (futureTitleContainer.hasChildNodes()) {
+    futureTitleContainer.removeChild(futureTitleContainer.children[0]);
+  }
+
+  if (futureResults.hasChildNodes()) {
+    for (var i = 0; i < 5; i++) {
+      futureResults.removeChild(futureResults.children[0]);
+    }
+  }
+}
+
 //Print past search terms to left column
 var citySearchedListItem;
 
@@ -246,10 +301,9 @@ pastSearchContainer.addEventListener('click', pastSearchClickHandler);
 
 /*
 #1
-Not currently clearing printed data before showing new time selection
-Need function to clear printed data
-    futureResults.removeChild(futureResults.firstElementChild);
-
-#2
 Not accurately pulling date
+Add another API call
+
+#2 if already exists, don't add again
+&& lastCitySearched != 
 */

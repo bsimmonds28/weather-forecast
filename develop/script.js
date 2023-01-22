@@ -78,8 +78,12 @@ init();
       .then(function (response) {
         if (response.ok) {
             response.json().then(function (data) {
-            console.log(data);
-        
+
+            if (data.length === 0) {
+              alert('Invalid entry');
+              return;
+            };
+
             var title = document.createElement('h4');
             title.textContent = searchTerm;
            
@@ -114,13 +118,11 @@ init();
     var lat = data[0].lat;
     var lon = data[0].lon;
     var apiUrl = 'https://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + lon + '&appid=0a50200db97416c63d779065700c03c2&units=imperial&lang=en';
-    console.log(apiUrl);
 
     fetch(apiUrl)
       .then(function (response) {
         if (response.ok) {
             response.json().then(function (details) {
-            console.log(details);
             getCurrentWeather(details);
           });
         } else {
@@ -137,13 +139,11 @@ init();
     var lat = data[0].lat;
     var lon = data[0].lon;
     var apiUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + lon + '&appid=0a50200db97416c63d779065700c03c2&units=imperial&lang=en';
-    console.log(apiUrl);
 
     fetch(apiUrl)
       .then(function (response) {
         if (response.ok) {
             response.json().then(function (details) {
-            console.log(details);
             getFutureWeather(details);
           });
         } else {
@@ -210,7 +210,7 @@ var getFutureWeather = function (details) {
   futureTitle.textContent = "5-Day Forecast";
   futureTitleContainer.appendChild(futureTitle);
 
-  for (i = 7; i < 40; i++) {
+  for (i = 0; i < 40; i++) {
     var divFuture = document.createElement('div');
     divFuture.setAttribute('class', "futureday");
     futureResults.appendChild(divFuture);
@@ -246,7 +246,7 @@ var getFutureWeather = function (details) {
     windspeed.textContent = "Wind: " + windspeedVal + "MPH";
     divFuture.appendChild(windspeed);
 
-    i = i + 7;
+    i = i + 8;
   }
 };
 
@@ -283,7 +283,6 @@ function printPastSearches() {
   for (var i = 0; i < citiesSearchedArray.length; i++) {
       if (!unduplicatedCitiesSearchedArray.includes(citiesSearchedArray[i].city)) {
           unduplicatedCitiesSearchedArray.push(citiesSearchedArray[i].city);
-          console.log(unduplicatedCitiesSearchedArray);
       };
   };
 

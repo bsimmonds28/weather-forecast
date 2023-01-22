@@ -7,13 +7,13 @@ My weather dashboard runs in the browser and features dynamically updated HTML a
 The following images show the web application's appearance and functionality.
 
 If neither current or future is selected, both time periods will display.
-![The weather app includes a search option, a list of past searched cities, and a five-day forecast and current weather conditions for Collinsville.](./assets/weather-dashboard.png)
+![The weather app includes a search option, a list of past searched cities, and a five-day forecast and current weather conditions for Boulder.](./assets/weather-dashboard.png)
 
 If current is selected, then the current day's weather will display.
-![The weather app includes a search option, a list of past searched cities, and a five-day forecast and current weather conditions for Collinsville.](./assets/weather-dashboard-current.png)
+![The weather app includes a search option, a list of past searched cities, and a five-day forecast and current weather conditions for Boulder.](./assets/weather-dashboard-current.png)
 
 If future is selected, then a five day forecast will display.
-![The weather app includes a search option, a list of past searched cities, and a five-day forecast and current weather conditions for Collinsville.](./assets/weather-dashboard-future.png)
+![The weather app includes a search option, a list of past searched cities, and a five-day forecast and current weather conditions for Boulder.](./assets/weather-dashboard-future.png)
 
 
 ## Link

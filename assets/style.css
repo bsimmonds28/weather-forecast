@@ -26,6 +26,8 @@
   }
   
   .title-container {
+    display: flex;
+    justify-content: center;
     background-color: var(--dark);
     color: var(--primary);
   }
@@ -107,7 +109,8 @@
     display: flex;
     flex-wrap: wrap;
   }
-  #current-weather {
+  
+  .current-weather {
     margin: 20px 20px 20px 0px;
     padding: 15px;
     border: 3px solid var(--dark);

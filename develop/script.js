@@ -70,7 +70,7 @@ function init(){
     
 init();
 
-//Get city weather repos
+//Get coordinates and fetch weather based on time selection
   var getCoordinates = function (searchTerm) {
     var geocoding= 'http://api.openweathermap.org/geo/1.0/direct?q=' + searchTerm + '&limit=1&appid=0a50200db97416c63d779065700c03c2';
 
@@ -79,8 +79,27 @@ init();
         if (response.ok) {
             response.json().then(function (data) {
             console.log(data);
-            getCurrentWeatherFetch(data);
-            getWeatherFetch(data);
+        
+            var title = document.createElement('h4');
+            title.textContent = searchTerm;
+           
+            if (results.hasChildNodes()) {
+              results.removeChild(results.children[0]);
+            }
+
+            results.appendChild(title);
+            currentResults.setAttribute("class", "current-weather")
+        
+            removeWeather();
+        
+            if (timeSelection == "future") {
+              getWeatherFetch(data);
+            } else if (timeSelection == "current") {
+              getCurrentWeatherFetch(data);
+            } else {
+              getCurrentWeatherFetch(data);
+              getWeatherFetch(data);
+            }
             });
         } else {
           alert('Error: ' + response.statusText);
@@ -91,6 +110,7 @@ init();
       });
   };
 
+  //Get the current weather
   var getCurrentWeatherFetch = function (data) {
     var lat = data[0].lat;
     var lon = data[0].lon;
@@ -102,7 +122,7 @@ init();
         if (response.ok) {
             response.json().then(function (details) {
             console.log(details);
-            displayRepos(details);
+            getCurrentWeather(details);
           });
         } else {
           alert('Error: ' + response.statusText);
@@ -113,6 +133,7 @@ init();
       });
   };
 
+  //Get the weather forecast
   var getWeatherFetch = function (data) {
     var lat = data[0].lat;
     var lon = data[0].lon;
@@ -124,7 +145,7 @@ init();
         if (response.ok) {
             response.json().then(function (details) {
             console.log(details);
-            displayRepos(details);
+            getFutureWeather(details);
           });
         } else {
           alert('Error: ' + response.statusText);
@@ -135,35 +156,14 @@ init();
       });
 };
 
-//Display function which shows city name and based on time selection displays information
-var displayRepos = function (details) {
+//Function to print current weather
+//Current: Add date, display an icon representation of weather conditions, the temperature, the humidity, and the wind speed
+var getCurrentWeather = function (details) {
+
     if (details.length === 0) {
       repoContainerEl.textContent = 'No weather found.';
       return;
     }
-
-    var title = document.createElement('h4');
-    title.textContent = searchTerm;
-    if (results.hasChildNodes()) {
-      results.removeChild(results.children[0]);
-    }
-    results.appendChild(title);
-
-    removeWeather();
-
-    if (timeSelection == "future") {
-      getFutureWeather(details);
-    } else if (timeSelection == "current") {
-      getCurrentWeather(details);
-    } else {
-      getCurrentWeather(details);
-      getFutureWeather(details);
-    }
-};
-
-//Function to print current weather
-//Current: Add date, display an icon representation of weather conditions, the temperature, the humidity, and the wind speed
-var getCurrentWeather = function (details) {
 
     var date = document.createElement('h5');
     var currentDate = dayjs().format('MM-DD-YYYY');
@@ -200,6 +200,11 @@ var getCurrentWeather = function (details) {
 //Future: Add 5-day forecast that displays the date, an icon representation of weather conditions, the temperature, the wind speed, and the humidity
 var getFutureWeather = function (details) {
   
+  if (details.length === 0) {
+    repoContainerEl.textContent = 'No weather found.';
+    return;
+  }
+
   var futureTitle = document.createElement('h4');
   futureTitle.textContent = "5-Day Forecast";
   futureTitleContainer.appendChild(futureTitle);
@@ -248,6 +253,7 @@ var getFutureWeather = function (details) {
 var removeWeather = function () {
 
   if (currentResults.hasChildNodes()) {
+    currentResults.removeAttribute("class", "current-weather");
     for (var i = 0; i < 5; i++) {
       currentResults.removeChild(currentResults.children[0]);
     }
@@ -271,15 +277,19 @@ function printPastSearches() {
   var pastSearchHeader = document.createElement("h3");
   pastSearchHeader.textContent = "VIEW PAST SEARCHES";
   pastSearchContainer.appendChild(pastSearchHeader);
+  var unduplicatedCitiesSearchedArray = [];
 
-  var unduplicatedCitiesSearchedArray = citiesSearchedArray.filter((element, index) => {
-    return citiesSearchedArray.indexOf(element) === index;
-  });
+  for (var i = 0; i < citiesSearchedArray.length; i++) {
+      if (!unduplicatedCitiesSearchedArray.includes(citiesSearchedArray[i].city)) {
+          unduplicatedCitiesSearchedArray.push(citiesSearchedArray[i].city);
+          console.log(unduplicatedCitiesSearchedArray);
+      };
+  };
 
   for (var i = 0; i < unduplicatedCitiesSearchedArray.length; i++) {
-      var lastCitySearched = unduplicatedCitiesSearchedArray[i].city;
+      var lastCitySearched = unduplicatedCitiesSearchedArray[i];
 
-      if (lastCitySearched && lastCitySearched !== ) {
+      if (lastCitySearched) {
         citySearchedListItem = document.createElement("p");
         citySearchedListItem.textContent = lastCitySearched;
         pastSearchContainer.appendChild(citySearchedListItem);
@@ -299,12 +309,3 @@ var pastSearchClickHandler = function (event) {
 };
 
 pastSearchContainer.addEventListener('click', pastSearchClickHandler);
-
-/*
-#1
-Not accurately pulling date
-Add another API call
-
-#2 if already exists, don't add again
-&& lastCitySearched != 
-*/

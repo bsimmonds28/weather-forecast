@@ -28,7 +28,7 @@ var searchTermCoordinates = function (searchTerm) {
       city: searchTerm,
     };
 
-    citiesSearchedArray.push(citiesSearchedTemp);
+    citiesSearchedArray.unshift(citiesSearchedTemp);
 
     storeInput();
 
@@ -88,7 +88,6 @@ init();
             }
 
             results.appendChild(title);
-            currentResults.setAttribute("class", "current-weather")
         
             removeWeather();
         
@@ -164,6 +163,8 @@ var getCurrentWeather = function (details) {
       repoContainerEl.textContent = 'No weather found.';
       return;
     }
+
+    currentResults.setAttribute("class", "current-weather")
 
     var date = document.createElement('h5');
     var currentDate = dayjs().format('MM-DD-YYYY');
@@ -304,6 +305,7 @@ var pastSearchClickHandler = function (event) {
 
   if (citySearchId) {
       searchTerm = citySearchId;
+      timeSelection = "unselected";
       searchTermCoordinates(searchTerm);
   }
 };

@@ -72,7 +72,7 @@ init();
 
 //Get coordinates and fetch weather based on time selection
   var getCoordinates = function (searchTerm) {
-    var geocoding= 'http://api.openweathermap.org/geo/1.0/direct?q=' + searchTerm + '&limit=1&appid=0a50200db97416c63d779065700c03c2';
+    var geocoding= 'https://api.openweathermap.org/geo/1.0/direct?q=' + searchTerm + '&limit=1&appid=0a50200db97416c63d779065700c03c2';
 
     fetch(geocoding)
       .then(function (response) {
@@ -136,7 +136,7 @@ init();
   var getWeatherFetch = function (data) {
     var lat = data[0].lat;
     var lon = data[0].lon;
-    var apiUrl = 'http://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + lon + '&appid=0a50200db97416c63d779065700c03c2&units=imperial&lang=en';
+    var apiUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + lon + '&appid=0a50200db97416c63d779065700c03c2&units=imperial&lang=en';
     console.log(apiUrl);
 
     fetch(apiUrl)
